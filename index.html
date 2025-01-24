@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Panel Admin - Scoreboard</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      .input-group {
+        margin-bottom: 10px;
+      }
+      label {
+        display: inline-block;
+        width: 100px;
+      }
+      button {
+        margin-left: 8px;
+      }
+      #timeDisplay {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+      /* Opcional: estilos para la previsualización de imagen */
+      .preview {
+        max-width: 100px;
+        max-height: 100px;
+        border: 1px solid #ccc;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Panel de Administración</h1>
+
+    <!-- Equipo A -->
+    <div class="input-group">
+      <label>Equipo A:</label>
+      <input id="teamAName" type="text" placeholder="Nombre Equipo A" />
+      <label>Logo A:</label>
+      <button id="selectLogoABtn">Seleccionar Logo A</button>
+
+      <!-- PREVIEW DE LOGO A -->
+      <img id="logoAPreview" class="preview" alt="Preview Logo A" />
+    </div>
+
+    <!-- Equipo B -->
+    <div class="input-group">
+      <label>Equipo B:</label>
+      <input id="teamBName" type="text" placeholder="Nombre Equipo B" />
+      <label>Logo B:</label>
+      <button id="selectLogoBBtn">Seleccionar Logo B</button>
+
+      <!-- PREVIEW DE LOGO B -->
+      <img id="logoBPreview" class="preview" alt="Preview Logo B" />
+    </div>
+
+    <!-- Marcador A -->
+    <div class="input-group">
+      <label>Marcador A:</label>
+      <button id="teamAScoreMinus">-</button>
+      <span id="teamAScoreValue">0</span>
+      <button id="teamAScorePlus">+</button>
+    </div>
+
+    <!-- Marcador B -->
+    <div class="input-group">
+      <label>Marcador B:</label>
+      <button id="teamBScoreMinus">-</button>
+      <span id="teamBScoreValue">0</span>
+      <button id="teamBScorePlus">+</button>
+    </div>
+
+    <!-- Selector de Cuarto -->
+    <div class="input-group">
+      <label>Cuarto:</label>
+      <select id="quarterSelect">
+        <option value="1Q">1Q</option>
+        <option value="2Q">2Q</option>
+        <option value="3Q">3Q</option>
+        <option value="4Q">4Q</option>
+      </select>
+    </div>
+
+    <hr />
+
+    <!-- Tiempo -->
+    <h2>Tiempo</h2>
+    <div id="timeDisplay">00:00</div>
+    <div class="input-group">
+      <button id="startStopTimeBtn">Iniciar</button>
+      <button id="back10sBtn">-10s</button>
+      <button id="forward10sBtn">+10s</button>
+      <button id="back1mBtn">-1m</button>
+      <button id="forward1mBtn">+1m</button>
+    </div>
+    <div class="input-group">
+      <label>Tiempo personalizado (mm:ss):</label>
+      <input id="customTime" type="text" placeholder="00:00" />
+      <button id="setTimeBtn">Establecer</button>
+    </div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", async () => {
+        const { electronAPI } = window;
+
+        // Referencias del DOM
+        const teamANameInput = document.getElementById("teamAName");
+        const selectLogoABtn = document.getElementById("selectLogoABtn");
+        const logoAPreview = document.getElementById("logoAPreview");
+
+        const teamBNameInput = document.getElementById("teamBName");
+        const selectLogoBBtn = document.getElementById("selectLogoBBtn");
+        const logoBPreview = document.getElementById("logoBPreview");
+
+        const teamAScoreMinusBtn = document.getElementById("teamAScoreMinus");
+        const teamAScoreValue = document.getElementById("teamAScoreValue");
+        const teamAScorePlusBtn = document.getElementById("teamAScorePlus");
+
+        const teamBScoreMinusBtn = document.getElementById("teamBScoreMinus");
+        const teamBScoreValue = document.getElementById("teamBScoreValue");
+        const teamBScorePlusBtn = document.getElementById("teamBScorePlus");
+
+        const quarterSelect = document.getElementById("quarterSelect");
+        const timeDisplay = document.getElementById("timeDisplay");
+        const startStopTimeBtn = document.getElementById("startStopTimeBtn");
+        const back10sBtn = document.getElementById("back10sBtn");
+        const forward10sBtn = document.getElementById("forward10sBtn");
+        const back1mBtn = document.getElementById("back1mBtn");
+        const forward1mBtn = document.getElementById("forward1mBtn");
+        const customTimeInput = document.getElementById("customTime");
+        const setTimeBtn = document.getElementById("setTimeBtn");
+
+        let scoreboardData = await electronAPI.getScoreboardData();
+
+        // Inicializamos la UI
+        teamANameInput.value = scoreboardData.teamAName;
+        teamBNameInput.value = scoreboardData.teamBName;
+        teamAScoreValue.textContent = scoreboardData.teamAScore;
+        teamBScoreValue.textContent = scoreboardData.teamBScore;
+        quarterSelect.value = scoreboardData.quarter;
+        timeDisplay.textContent = formatTime(scoreboardData.remainingTime);
+        startStopTimeBtn.textContent = scoreboardData.timeRunning
+          ? "Pausar"
+          : "Iniciar";
+
+        function updateData(newPartial) {
+          scoreboardData = { ...scoreboardData, ...newPartial };
+          electronAPI.updateScoreboardData(newPartial);
+        }
+
+        function formatTime(totalSeconds) {
+          const minutes = Math.floor(totalSeconds / 60);
+          const seconds = totalSeconds % 60;
+          return `${String(minutes).padStart(2, "0")}:${String(
+            seconds
+          ).padStart(2, "0")}`;
+        }
+
+        // Ejemplo: si quieres forzar una ruta sin file://, ajusta la lógica acá
+        // o mantén la normal si vas con file:///.
+        function removeFileProtocol(filePath) {
+          // Lógica anterior, si deseas remover "file://"
+          // O déjalo tal cual si tu scoreboard lo maneja
+          let fixed = filePath.replace(/\\/g, "/");
+          if (fixed.startsWith("file://")) {
+            fixed = fixed.slice("file://".length);
+          }
+          if (!fixed.startsWith("/")) {
+            fixed = "/" + fixed;
+          }
+          return fixed;
+        }
+
+        // Logo A
+        selectLogoABtn.addEventListener("click", async () => {
+          const chosenPath = await electronAPI.selectLogoDialog();
+          if (chosenPath) {
+            // Ej: aquí puedes remover el protocolo si quieres
+            const finalPath = removeFileProtocol(chosenPath);
+            updateData({ teamALogo: finalPath });
+
+            // MOSTRAR PREVIEW en el panel
+            // Si tu renderer permite acceder a "file:///..." local, puedes usar chosenPath directamente:
+            logoAPreview.src = chosenPath; // p.ej. "file:///Users/..."
+            // O si quieres sin "file://", harías:
+            // logoAPreview.src = finalPath;
+          }
+        });
+
+        // Logo B
+        selectLogoBBtn.addEventListener("click", async () => {
+          const chosenPath = await electronAPI.selectLogoDialog();
+          if (chosenPath) {
+            const finalPath = removeFileProtocol(chosenPath);
+            updateData({ teamBLogo: finalPath });
+
+            // MOSTRAR PREVIEW en el panel
+            logoBPreview.src = chosenPath;
+            // o logoBPreview.src = finalPath, según lo que te funcione mejor
+          }
+        });
+
+        // Nombres de equipos
+        teamANameInput.addEventListener("change", () => {
+          updateData({ teamAName: teamANameInput.value });
+        });
+        teamBNameInput.addEventListener("change", () => {
+          updateData({ teamBName: teamBNameInput.value });
+        });
+
+        // Marcadores
+        teamAScoreMinusBtn.addEventListener("click", () => {
+          updateData({ teamAScore: scoreboardData.teamAScore - 1 });
+        });
+        teamAScorePlusBtn.addEventListener("click", () => {
+          updateData({ teamAScore: scoreboardData.teamAScore + 1 });
+        });
+
+        teamBScoreMinusBtn.addEventListener("click", () => {
+          updateData({ teamBScore: scoreboardData.teamBScore - 1 });
+        });
+        teamBScorePlusBtn.addEventListener("click", () => {
+          updateData({ teamBScore: scoreboardData.teamBScore + 1 });
+        });
+
+        quarterSelect.addEventListener("change", () => {
+          updateData({ quarter: quarterSelect.value });
+        });
+
+        // Temporizador
+        startStopTimeBtn.addEventListener("click", () => {
+          const nextState = !scoreboardData.timeRunning;
+          electronAPI.startStopTimer(nextState);
+          scoreboardData.timeRunning = nextState;
+          startStopTimeBtn.textContent = nextState ? "Pausar" : "Iniciar";
+        });
+
+        back10sBtn.addEventListener("click", () => {
+          electronAPI.adjustTime(-10);
+        });
+        forward10sBtn.addEventListener("click", () => {
+          electronAPI.adjustTime(10);
+        });
+        back1mBtn.addEventListener("click", () => {
+          electronAPI.adjustTime(-60);
+        });
+        forward1mBtn.addEventListener("click", () => {
+          electronAPI.adjustTime(60);
+        });
+
+        setTimeBtn.addEventListener("click", () => {
+          const val = customTimeInput.value; // "mm:ss"
+          const parts = val.split(":");
+          if (parts.length === 2) {
+            const mm = parseInt(parts[0], 10);
+            const ss = parseInt(parts[1], 10);
+            if (!isNaN(mm) && !isNaN(ss)) {
+              updateData({ remainingTime: mm * 60 + ss });
+            }
+          }
+        });
+
+        // IPC Listeners
+        electronAPI.onTimeUpdated((event, newTime) => {
+          scoreboardData.remainingTime = newTime;
+          timeDisplay.textContent = formatTime(newTime);
+        });
+
+        electronAPI.onScoreboardUpdated((event, updatedData) => {
+          scoreboardData = updatedData;
+          teamAScoreValue.textContent = scoreboardData.teamAScore;
+          teamBScoreValue.textContent = scoreboardData.teamBScore;
+          quarterSelect.value = scoreboardData.quarter;
+          timeDisplay.textContent = formatTime(scoreboardData.remainingTime);
+          startStopTimeBtn.textContent = scoreboardData.timeRunning
+            ? "Pausar"
+            : "Iniciar";
+        });
+      });
+    </script>
+  </body>
+</html>

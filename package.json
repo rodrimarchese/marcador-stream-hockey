@@ -1,0 +1,33 @@
+{
+  "name": "marcador-stream-hockey",
+  "version": "1.0.0",
+  "description": "Marcador de hockey para OBS con Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.tuproyecto.hockeyscoreboard",
+    "productName": "Hockey Scoreboard",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.sports",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  },
+  "devDependencies": {
+    "electron": "^34.0.1",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
