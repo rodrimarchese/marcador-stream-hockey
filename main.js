@@ -1,5 +1,7 @@
+// main.js
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const generateScoreboard = require("./generateScoreboard");
 
 // --- DATOS DEL SCOREBOARD ---
@@ -18,6 +20,11 @@ let scoreboardData = {
 
 let mainWindow = null;
 let timerInterval = null;
+
+// Función para normalizar rutas a usar barras normales
+function normalizePath(filePath) {
+  return filePath.split(path.sep).join("/");
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -84,7 +91,9 @@ ipcMain.handle("selectLogoDialog", async () => {
     ],
   });
   if (!canceled && filePaths.length > 0) {
-    return filePaths[0]; // Ruta local absoluta
+    // Normalizar la ruta
+    const normalizedPath = normalizePath(filePaths[0]);
+    return normalizedPath; // Ruta normalizada con barras normales
   }
   return null;
 });
@@ -92,6 +101,14 @@ ipcMain.handle("selectLogoDialog", async () => {
 ipcMain.on("updateScoreboardData", (event, partialData) => {
   // Mezclamos la data existente con la nueva
   console.log("RECIBIENDO partialData:", partialData);
+
+  // Si se actualizan los logos, normalizar las rutas
+  if (partialData.teamALogo) {
+    partialData.teamALogo = normalizePath(partialData.teamALogo);
+  }
+  if (partialData.teamBLogo) {
+    partialData.teamBLogo = normalizePath(partialData.teamBLogo);
+  }
 
   scoreboardData = { ...scoreboardData, ...partialData };
   // Actualizamos scoreboard.html
