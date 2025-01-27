@@ -8,61 +8,101 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: rgba(0, 0, 0, 0);
-        font-family: sans-serif;
+        background-color: transparent;
+        font-family: "Arial", sans-serif;
         color: #fff;
       }
-      .container {
+      .scoreboard {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        background-color: rgba(0, 0, 0, 0.6);
-        padding: 10px;
+        max-width: 750px;
+        margin: 20px auto;
+      }
+      .teams-container {
+        display: flex;
+        align-items: center;
+        background-color: #0a0b35;
+        color: #fff;
+        width: 100%;
+        border-radius: 10px;
       }
       .team {
-        margin: 0 20px;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 20px;
+        flex: 1;
+      }
+      .team img {
+        height: 45px;
+        width: 35px;
+        object-fit: contain;
+      }
+      .team .name {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-inline: 10px;
       }
       .score {
-        font-size: 2rem;
+        background-color: #fff;
+        color: #0a0b35;
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 2.5rem;
         font-weight: bold;
       }
-      .quarter,
-      .time {
-        font-size: 1.5rem;
-        margin: 0 20px;
-      }
-      img {
-        max-height: 60px;
+      .timer {
+        background-color: #006838;
+        color: #fff;
+        padding: 10px 30px;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <!-- Equipo A -->
-      <div class="team">
-        <img
-          src="{{teamALogo}}"
-          alt="Logo A"
-          onerror="this.style.display='none'"
-        />
-        <div class="name">{{teamAName}}</div>
-        <div class="score">{{teamAScore}}</div>
+    <div class="scoreboard">
+      <!-- Contenedor Equipos -->
+      <div class="teams-container">
+        <!-- Equipo A -->
+        <div class="team">
+          <img
+            src="{{teamALogo}}"
+            alt="Logo A"
+            onerror="this.style.display='none'"
+          />
+          <div class="name">{{teamAName}}</div>
+        </div>
+
+        <!-- Puntaje -->
+        <div class="score">
+          <span>{{teamAScore}}</span>
+          <span>|</span>
+          <span>{{teamBScore}}</span>
+        </div>
+
+        <!-- Equipo B -->
+        <div class="team" style="justify-content: flex-end">
+          <div class="name">{{teamBName}}</div>
+          <img
+            src="{{teamBLogo}}"
+            alt="Logo B"
+            onerror="this.style.display='none'"
+          />
+        </div>
       </div>
 
-      <!-- Tiempo y Cuarto -->
-      <div class="time">{{time}}</div>
-      <div class="quarter">{{quarter}}</div>
-
-      <!-- Equipo B -->
-      <div class="team">
-        <img
-          src="{{teamBLogo}}"
-          alt="Logo B"
-          onerror="this.style.display='none'"
-        />
-        <div class="name">{{teamBName}}</div>
-        <div class="score">{{teamBScore}}</div>
+      <!-- Temporizador -->
+      <div class="timer">
+        <span>{{time}}</span>
+        <span>|</span>
+        <span>{{quarter}}</span>
       </div>
     </div>
   </body>

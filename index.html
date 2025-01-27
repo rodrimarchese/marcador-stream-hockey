@@ -6,106 +6,238 @@
     <style>
       body {
         font-family: sans-serif;
+        background-color: #0a0b35;
+        color: white;
+        padding: 20px;
+        margin: 0;
+      }
+      .card {
+        max-width: 1000px;
+        margin: 0 auto;
+        background-color: #0a0b35;
+        border: 1px solid #444;
+        border-radius: 10px;
         padding: 20px;
       }
-      .input-group {
+      .card-header {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+      .subtitle {
+        margin-bottom: 15px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .section {
+        padding: 20px;
+        border: 1px solid #555;
+        border-radius: 8px;
+      }
+      .section label {
+        display: block;
+        font-size: 1rem;
         margin-bottom: 10px;
       }
-      label {
-        display: inline-block;
+      .section input[type="text"],
+      .section input[type="file"],
+      .section select {
+        width: 70%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: white;
+        color: black;
+        font-size: 1.5rem;
+      }
+      #quarterSelect {
         width: 100px;
+        padding: 12px;
+        font-size: 1.2rem;
+        text-align: center;
+        cursor: pointer;
       }
-      button {
-        margin-left: 8px;
+      #quarterSelect option {
+        font-size: 1.2rem;
+        padding: 10px;
       }
-      #timeDisplay {
+      .section img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        margin-top: 10px;
+      }
+      .score-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        margin-top: 25px;
+      }
+      #startStopTimeBtn {
+        height: 70px;
+        width: 140px;
+        font-size: 1.5rem;
+      }
+      .score-controls button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        background-color: #006838;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .score-controls button:hover {
+        background-color: #005830;
+      }
+      .score-display {
         font-size: 2rem;
         font-weight: bold;
       }
-      /* Opcional: estilos para la previsualización de imagen */
-      .preview {
-        max-width: 100px;
-        max-height: 100px;
+      .timer-section {
+        text-align: center;
+        margin-top: 30px;
+      }
+      .timer-section h3 {
+        font-size: 1.5rem;
+      }
+      .timer {
+        font-size: 3rem;
+        font-family: monospace;
+        margin: 20px 0;
+      }
+      .timer-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
+      .timer-controls button {
+        height: 40px;
+        padding: 0 20px;
+        font-size: 1rem;
+        background-color: #006838;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .timer-controls button:hover {
+        background-color: #005830;
+      }
+      .custom-time {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .custom-time input {
+        width: 100px;
+        padding: 10px;
+        border-radius: 5px;
         border: 1px solid #ccc;
-        margin-left: 5px;
+        background-color: white;
+        color: black;
+        font-size: 1rem;
+      }
+      .custom-time button {
+        background-color: #006838;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .custom-time button:hover {
+        background-color: #005830;
       }
     </style>
   </head>
   <body>
-    <h1>Panel de Administración</h1>
+    <div class="card">
+      <div class="card-header">Panel de Administración</div>
+      <div class="subtitle">
+        <label
+          >El archivo para seleccionar desde OBS esta en la carpeta Documentos,
+          en una carpeta que se llama "obsTemplates". El archivo se llama:
+          scoreboard.html</label
+        >
+      </div>
 
-    <!-- Equipo A -->
-    <div class="input-group">
-      <label>Equipo A:</label>
-      <input id="teamAName" type="text" placeholder="Nombre Equipo A" />
-      <label>Logo A:</label>
-      <button id="selectLogoABtn">Seleccionar Logo A</button>
+      <div class="grid">
+        <!-- Equipo A -->
+        <div class="section">
+          <label for="teamAName">Equipo A:</label>
+          <input id="teamAName" type="text" placeholder="Nombre Equipo A" />
+          <label for="selectLogoABtn">Logo A:</label>
+          <button id="selectLogoABtn">Seleccionar Logo A</button>
+          <img id="logoAPreview" src="" alt="Preview Logo A" />
+          <div class="score-controls">
+            <button id="teamAScoreMinus">-</button>
+            <span id="teamAScoreValue" class="score-display">0</span>
+            <button id="teamAScorePlus">+</button>
+          </div>
+        </div>
 
-      <!-- PREVIEW DE LOGO A -->
-      <img id="logoAPreview" class="preview" alt="Preview Logo A" />
-    </div>
+        <!-- Equipo B -->
+        <div class="section">
+          <label for="teamBName">Equipo B:</label>
+          <input id="teamBName" type="text" placeholder="Nombre Equipo B" />
+          <label for="selectLogoBBtn">Logo B:</label>
+          <button id="selectLogoBBtn">Seleccionar Logo B</button>
+          <img id="logoBPreview" src="" alt="Preview Logo B" />
+          <div class="score-controls">
+            <button id="teamBScoreMinus">-</button>
+            <span id="teamBScoreValue" class="score-display">0</span>
+            <button id="teamBScorePlus">+</button>
+          </div>
+        </div>
+      </div>
 
-    <!-- Equipo B -->
-    <div class="input-group">
-      <label>Equipo B:</label>
-      <input id="teamBName" type="text" placeholder="Nombre Equipo B" />
-      <label>Logo B:</label>
-      <button id="selectLogoBBtn">Seleccionar Logo B</button>
-
-      <!-- PREVIEW DE LOGO B -->
-      <img id="logoBPreview" class="preview" alt="Preview Logo B" />
-    </div>
-
-    <!-- Marcador A -->
-    <div class="input-group">
-      <label>Marcador A:</label>
-      <button id="teamAScoreMinus">-</button>
-      <span id="teamAScoreValue">0</span>
-      <button id="teamAScorePlus">+</button>
-    </div>
-
-    <!-- Marcador B -->
-    <div class="input-group">
-      <label>Marcador B:</label>
-      <button id="teamBScoreMinus">-</button>
-      <span id="teamBScoreValue">0</span>
-      <button id="teamBScorePlus">+</button>
-    </div>
-
-    <!-- Selector de Cuarto -->
-    <div class="input-group">
-      <label>Cuarto:</label>
-      <select id="quarterSelect">
-        <option value="1Q">1Q</option>
-        <option value="2Q">2Q</option>
-        <option value="3Q">3Q</option>
-        <option value="4Q">4Q</option>
-      </select>
-    </div>
-
-    <hr />
-
-    <!-- Tiempo -->
-    <h2>Tiempo</h2>
-    <div id="timeDisplay">00:00</div>
-    <div class="input-group">
-      <button id="startStopTimeBtn">Iniciar</button>
-      <button id="back10sBtn">-10s</button>
-      <button id="forward10sBtn">+10s</button>
-      <button id="back1mBtn">-1m</button>
-      <button id="forward1mBtn">+1m</button>
-    </div>
-    <div class="input-group">
-      <label>Tiempo personalizado (mm:ss):</label>
-      <input id="customTime" type="text" placeholder="00:00" />
-      <button id="setTimeBtn">Establecer</button>
+      <div class="timer-section">
+        <h3>Tiempo</h3>
+        <div class="timer" id="timeDisplay">00:00</div>
+        <label for="quarterSelect">Cuarto:</label>
+        <select id="quarterSelect">
+          <option value="1Q">1Q</option>
+          <option value="2Q">2Q</option>
+          <option value="3Q">3Q</option>
+          <option value="4Q">4Q</option>
+        </select>
+        <div class="timer-controls">
+          <button id="startStopTimeBtn">Iniciar</button>
+        </div>
+        <div class="timer-controls">
+          <button id="back10sBtn">-10s</button>
+          <button id="forward10sBtn">+10s</button>
+          <button id="back1mBtn">-1m</button>
+          <button id="forward1mBtn">+1m</button>
+        </div>
+        <div class="custom-time">
+          <input id="customTime" type="text" placeholder="00:00" />
+          <button id="setTimeBtn">Establecer</button>
+        </div>
+      </div>
     </div>
 
     <script>
+      // Script original adaptado para incluir quarterSelect
       window.addEventListener("DOMContentLoaded", async () => {
         const { electronAPI } = window;
 
-        // Referencias del DOM
         const teamANameInput = document.getElementById("teamAName");
         const selectLogoABtn = document.getElementById("selectLogoABtn");
         const logoAPreview = document.getElementById("logoAPreview");
@@ -134,12 +266,12 @@
 
         let scoreboardData = await electronAPI.getScoreboardData();
 
-        // Inicializamos la UI
+        // Inicialización de UI
         teamANameInput.value = scoreboardData.teamAName;
         teamBNameInput.value = scoreboardData.teamBName;
         teamAScoreValue.textContent = scoreboardData.teamAScore;
         teamBScoreValue.textContent = scoreboardData.teamBScore;
-        quarterSelect.value = scoreboardData.quarter;
+        quarterSelect.value = scoreboardData.quarter || "1Q";
         timeDisplay.textContent = formatTime(scoreboardData.remainingTime);
         startStopTimeBtn.textContent = scoreboardData.timeRunning
           ? "Pausar"
@@ -158,62 +290,39 @@
           ).padStart(2, "0")}`;
         }
 
-        // Ejemplo: si quieres forzar una ruta sin file://, ajusta la lógica acá
-        // o mantén la normal si vas con file:///.
-        function removeFileProtocol(filePath) {
-          // Lógica anterior, si deseas remover "file://"
-          // O déjalo tal cual si tu scoreboard lo maneja
-          let fixed = filePath.replace(/\\/g, "/");
-          if (fixed.startsWith("file://")) {
-            fixed = fixed.slice("file://".length);
-          }
-          if (!fixed.startsWith("/")) {
-            fixed = "/" + fixed;
-          }
-          return fixed;
-        }
+        quarterSelect.addEventListener("change", () => {
+          updateData({ quarter: quarterSelect.value });
+        });
 
-        // Logo A
+        // Manejadores de eventos para otras interacciones
         selectLogoABtn.addEventListener("click", async () => {
           const chosenPath = await electronAPI.selectLogoDialog();
           if (chosenPath) {
-            // Ej: aquí puedes remover el protocolo si quieres
-            const finalPath = removeFileProtocol(chosenPath);
-            updateData({ teamALogo: finalPath });
-
-            // MOSTRAR PREVIEW en el panel
-            // Si tu renderer permite acceder a "file:///..." local, puedes usar chosenPath directamente:
-            logoAPreview.src = chosenPath; // p.ej. "file:///Users/..."
-            // O si quieres sin "file://", harías:
-            // logoAPreview.src = finalPath;
+            updateData({ teamALogo: chosenPath });
+            logoAPreview.src = chosenPath;
           }
         });
 
-        // Logo B
         selectLogoBBtn.addEventListener("click", async () => {
           const chosenPath = await electronAPI.selectLogoDialog();
           if (chosenPath) {
-            const finalPath = removeFileProtocol(chosenPath);
-            updateData({ teamBLogo: finalPath });
-
-            // MOSTRAR PREVIEW en el panel
+            updateData({ teamBLogo: chosenPath });
             logoBPreview.src = chosenPath;
-            // o logoBPreview.src = finalPath, según lo que te funcione mejor
           }
         });
 
-        // Nombres de equipos
         teamANameInput.addEventListener("change", () => {
           updateData({ teamAName: teamANameInput.value });
         });
+
         teamBNameInput.addEventListener("change", () => {
           updateData({ teamBName: teamBNameInput.value });
         });
 
-        // Marcadores
         teamAScoreMinusBtn.addEventListener("click", () => {
           updateData({ teamAScore: scoreboardData.teamAScore - 1 });
         });
+
         teamAScorePlusBtn.addEventListener("click", () => {
           updateData({ teamAScore: scoreboardData.teamAScore + 1 });
         });
@@ -221,15 +330,11 @@
         teamBScoreMinusBtn.addEventListener("click", () => {
           updateData({ teamBScore: scoreboardData.teamBScore - 1 });
         });
+
         teamBScorePlusBtn.addEventListener("click", () => {
           updateData({ teamBScore: scoreboardData.teamBScore + 1 });
         });
 
-        quarterSelect.addEventListener("change", () => {
-          updateData({ quarter: quarterSelect.value });
-        });
-
-        // Temporizador
         startStopTimeBtn.addEventListener("click", () => {
           const nextState = !scoreboardData.timeRunning;
           electronAPI.startStopTimer(nextState);
@@ -240,18 +345,21 @@
         back10sBtn.addEventListener("click", () => {
           electronAPI.adjustTime(-10);
         });
+
         forward10sBtn.addEventListener("click", () => {
           electronAPI.adjustTime(10);
         });
+
         back1mBtn.addEventListener("click", () => {
           electronAPI.adjustTime(-60);
         });
+
         forward1mBtn.addEventListener("click", () => {
           electronAPI.adjustTime(60);
         });
 
         setTimeBtn.addEventListener("click", () => {
-          const val = customTimeInput.value; // "mm:ss"
+          const val = customTimeInput.value;
           const parts = val.split(":");
           if (parts.length === 2) {
             const mm = parseInt(parts[0], 10);
@@ -262,7 +370,6 @@
           }
         });
 
-        // IPC Listeners
         electronAPI.onTimeUpdated((event, newTime) => {
           scoreboardData.remainingTime = newTime;
           timeDisplay.textContent = formatTime(newTime);
